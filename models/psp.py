@@ -73,6 +73,9 @@ class pSp(nn.Module):
 			codes = x
 		else:
 			codes = self.encoder(x)
+			b, w, l = codes.size()
+			codes = codes[:,:,:l//2] + Variable(torch.randn(b, w, l//2).to(codes.device)) * (codes[:,:,l//2:] * 0.5).exp()
+			
 			# normalize with respect to the center of an average face
 			if self.opts.start_from_latent_avg:
 				if self.opts.learn_in_w:

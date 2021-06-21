@@ -182,6 +182,5 @@ class BackboneEncoderUsingLastLayerIntoWPlus(Module):
         x = self.body(x)
         x = self.output_layer_2(x)
         x = self.linear(x)
-        print("N STYLEs", self.n_styles)
         x = x.view(-1, self.n_styles, 1024)
         return x
