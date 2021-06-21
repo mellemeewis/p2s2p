@@ -1,6 +1,5 @@
 dataset_paths = {
-	'celeba_train': '',
-	'celeba_test': '',
+	'celeba': '/content/drive/MyDrive/datasets/celeba',
 	'celeba_train_sketch': '',
 	'celeba_test_sketch': '',
 	'celeba_train_segmentation': '',
