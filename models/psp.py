@@ -7,6 +7,8 @@ import math
 
 import torch
 from torch import nn
+from torch.autograd import Variable
+
 from models.encoders import psp_encoders
 from models.stylegan2.model import Generator
 from configs.paths_config import model_paths
