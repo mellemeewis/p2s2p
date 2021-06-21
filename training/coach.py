@@ -100,8 +100,8 @@ class Coach:
 				if self.global_step % self.opts.image_interval == 0 or (
 						self.global_step < 1000 and self.global_step % 25 == 0):
 					with torch.no_grad():
-						codes = torch.randn(latent.size())
-						y_sample = net.forward(codes, input_code=True)
+						codes = torch.randn(latent.size()).to(self.device)
+						y_sample = self.net.forward(codes, input_code=True)
 					self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
 					self.print_metrics(loss_dict, prefix='train')
@@ -136,11 +136,13 @@ class Coach:
 			with torch.no_grad():
 				x, y = x.to(self.device).float(), y.to(self.device).float()
 				y_hat, latent = self.net.forward(x, return_latents=True)
+				codes = torch.randn(latent.size()).to(self.device)
+				y_sample = self.net.forward(codes, input_code=True)
 				loss, cur_loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
 			agg_loss_dict.append(cur_loss_dict)
 
 			# Logging related
-			self.parse_and_log_images(id_logs, x, y, y_hat,
+			self.parse_and_log_images(id_logs, x, y, y_hat, y_sample,
 									  title='images/test/faces',
 									  subscript='{:04d}'.format(batch_idx))
 
@@ -202,7 +204,7 @@ class Coach:
 
 		if self.opts.kl_lambda > 0:
 			b, w, l = latent.size()
-			kl_loss = 0.5 * torch.mean(latents[:, :, l//2:].exp() - latents[:,:,l//2:] + latents[:, :, :l//2].pow(2) - 1, dim=1)
+			kl_loss = 0.5 * torch.mean(latent[:, :, l//2:].exp() - latent[:,:,l//2:] + latent[:, :, :l//2].pow(2) - 1)
 
 			loss_dict['kl'] = float(kl_loss)
 			loss += kl_loss * self.opts.kl_lambda
@@ -249,7 +251,7 @@ class Coach:
 		for key, value in metrics_dict.items():
 			print('\t{} = '.format(key), value)
 
-	def parse_and_log_images(self, id_logs, x, y, y_hat, title, subscript=None, display_count=2):
+	def parse_and_log_images(self, id_logs, x, y, y_hat, y_sample, title, subscript=None, display_count=2):
 		im_data = []
 		for i in range(display_count):
 			cur_im_data = {
