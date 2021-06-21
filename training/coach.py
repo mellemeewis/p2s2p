@@ -90,8 +90,6 @@ class Coach:
 				# print("\n\n\nY")
 				# print(y)
 				y_hat, latent = self.net.forward(x, return_latents=True)
-				print(y_hat.size())
-				print(latent.size())
 				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
 				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
 				loss.backward()
@@ -199,8 +197,8 @@ class Coach:
 		id_logs = None
 
 		if self.opts.kl_lambda > 0:
-			b, l = latent.size()
-			kl_loss = 0.5 * torch.mean(latents[:, l//2:].exp() - latents[:, l//2:] + latents[:, :l//2].pow(2) - 1, dim=1)
+			b, w, l = latent.size()
+			kl_loss = 0.5 * torch.mean(latents[:, :, l//2:].exp() - latents[:,:,l//2:] + latents[:, :, :l//2].pow(2) - 1, dim=1)
 
 			loss_dict['kl'] = float(kl_loss)
 			loss += kl_loss * self.opts.kl_lambda
