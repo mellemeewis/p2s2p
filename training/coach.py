@@ -165,7 +165,7 @@ class Coach:
 
 	def configure_optimizers(self):
 		params_enc = list(self.net.encoder.parameters())
-		params_dec += list(self.net.decoder.parameters())
+		params_dec = list(self.net.decoder.parameters())
 
 		enc_optim = torch.optim.Adam(params_enc, lr=self.opts.learning_rate)
 		dec_optim = torch.optim.Adam(params_dec, lr=self.opts.learning_rate)
