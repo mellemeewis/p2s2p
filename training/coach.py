@@ -98,7 +98,10 @@ class Coach:
 				# Logging related
 				if self.global_step % self.opts.image_interval == 0 or (
 						self.global_step < 1000 and self.global_step % 25 == 0):
-					self.parse_and_log_images(id_logs, x, y, y_hat, title='images/train/faces')
+					with torch.no_grad():
+						codes = torch.randn(latent.size())
+						y_sample = net.forward(codes, input_code=True)
+					self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
 					self.print_metrics(loss_dict, prefix='train')
 					self.log_metrics(loss_dict, prefix='train')
@@ -252,6 +255,7 @@ class Coach:
 				'input_face': common.log_input_image(x[i], self.opts),
 				'target_face': common.tensor2im(y[i]),
 				'output_face': common.tensor2im(y_hat[i]),
+				'sample_face': common.tensor2im(y_sample[i])
 			}
 			if id_logs is not None:
 				for key in id_logs[i]:
