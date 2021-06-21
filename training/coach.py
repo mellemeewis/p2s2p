@@ -9,6 +9,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 import torch.nn.functional as F
+from torch.autograd import Variable
 
 from utils import common, train_utils
 from criteria import id_loss, w_norm, moco_loss
