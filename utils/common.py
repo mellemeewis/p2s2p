@@ -52,7 +52,7 @@ def get_colors():
 def vis_faces(log_hooks):
 	display_count = len(log_hooks)
 	fig = plt.figure(figsize=(8, 4 * display_count))
-	gs = fig.add_gridspec(display_count, 3)
+	gs = fig.add_gridspec(display_count, 4)
 	for i in range(display_count):
 		hooks_dict = log_hooks[i]
 		fig.add_subplot(gs[i, 0])
@@ -75,6 +75,9 @@ def vis_faces_with_id(hooks_dict, fig, gs, i):
 	plt.imshow(hooks_dict['output_face'])
 	plt.title('Output\n Target Sim={:.2f}'.format(float(hooks_dict['diff_target'])))
 
+	fig.add_subplot(gs[i, 4])
+	plt.imshow(hooks_dict['sample_face'])
+	plt.title('Sample\n Target Sim={:.2f}'.format(float(hooks_dict['diff_target'])))
 
 def vis_faces_no_id(hooks_dict, fig, gs, i):
 	plt.imshow(hooks_dict['input_face'], cmap="gray")
@@ -85,3 +88,6 @@ def vis_faces_no_id(hooks_dict, fig, gs, i):
 	fig.add_subplot(gs[i, 2])
 	plt.imshow(hooks_dict['output_face'])
 	plt.title('Output')
+	fig.add_subplot(gs[i, 3])
+	plt.imshow(hooks_dict['sample_face'])
+	plt.title('Sample')
