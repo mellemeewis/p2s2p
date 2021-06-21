@@ -85,6 +85,10 @@ class Coach:
 				## VAE
 				x, y = batch
 				x, y = x.to(self.device).float(), y.to(self.device).float()
+				print(x)
+
+				print("\n\n\nY")
+				print(y)
 				y_hat, latent = self.net.forward(x, return_latents=True)
 				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
 				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
