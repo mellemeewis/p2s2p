@@ -50,7 +50,7 @@ class Coach:
 			self.moco_loss = moco_loss.MocoLoss().to(self.device).eval()
 
 		# Initialize optimizer
-		self.optimizer = self.configure_optimizers()
+		self.enc_optim, self.dec_optim = self.configure_optimizers()
 
 		# Initialize dataset
 		self.train_dataset, self.test_dataset = self.configure_datasets()
@@ -81,13 +81,15 @@ class Coach:
 		self.net.train()
 		while self.global_step < self.opts.max_steps:
 			for batch_idx, batch in enumerate(self.train_dataloader):
-				self.optimizer.zero_grad()
+
+				## VAE
 				x, y = batch
 				x, y = x.to(self.device).float(), y.to(self.device).float()
 				y_hat, latent = self.net.forward(x, return_latents=True)
 				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
+				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
 				loss.backward()
-				self.optimizer.step()
+				self.enc_optim.step(); self.dec_optim.step()
 
 				# Logging related
 				if self.global_step % self.opts.image_interval == 0 or (
@@ -158,14 +160,12 @@ class Coach:
 				f.write('Step - {}, \n{}\n'.format(self.global_step, loss_dict))
 
 	def configure_optimizers(self):
-		params = list(self.net.encoder.parameters())
-		if self.opts.train_decoder:
-			params += list(self.net.decoder.parameters())
-		if self.opts.optim_name == 'adam':
-			optimizer = torch.optim.Adam(params, lr=self.opts.learning_rate)
-		else:
-			optimizer = Ranger(params, lr=self.opts.learning_rate)
-		return optimizer
+		params_enc = list(self.net.encoder.parameters())
+		params_dec += list(self.net.decoder.parameters())
+
+		enc_optim = torch.optim.Adam(params_enc, lr=self.opts.learning_rate)
+		dec_optim = torch.optim.Adam(params_dec, lr=self.opts.learning_rate)
+		return enc_optim, dec_optim
 
 	def configure_datasets(self):
 		if self.opts.dataset_type not in data_configs.DATASETS.keys():
