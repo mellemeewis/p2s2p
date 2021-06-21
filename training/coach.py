@@ -94,8 +94,9 @@ class Coach:
 				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
 				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
 				loss.backward()
+
 				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1.)
-	            nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
+				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
 				self.enc_optim.step(); self.dec_optim.step()
 
 				# Logging related
