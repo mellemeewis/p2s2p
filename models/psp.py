@@ -58,13 +58,14 @@ class pSp(nn.Module):
 			if self.opts.label_nc != 0:
 				encoder_ckpt = {k: v for k, v in encoder_ckpt.items() if "input_layer" not in k}
 			self.encoder.load_state_dict(encoder_ckpt, strict=False)
-			print('Loading decoder weights from pretrained!')
+			# print('Loading decoder weights from pretrained!')
 			# ckpt = torch.load(self.opts.stylegan_weights)
 			# self.decoder.load_state_dict(ckpt['g_ema'], strict=False)
-			if self.opts.learn_in_w:
-				self.__load_latent_avg(ckpt, repeat=1)
-			else:
-				self.__load_latent_avg(ckpt, repeat=self.opts.n_styles)
+			self.latent_avg = None
+			# if self.opts.learn_in_w:
+			# 	self.__load_latent_avg(ckpt, repeat=1)
+			# else:
+			# 	self.__load_latent_avg(ckpt, repeat=self.opts.n_styles)
 
 	def forward(self, x, resize=True, latent_mask=None, input_code=False, randomize_noise=True,
 	            inject_latent=None, return_latents=False, alpha=None):
