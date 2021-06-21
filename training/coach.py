@@ -132,6 +132,8 @@ class Coach:
 			with torch.no_grad():
 				x, y = x.to(self.device).float(), y.to(self.device).float()
 				y_hat, latent = self.net.forward(x, return_latents=True)
+				print(y_hat.size())
+				print(latent.size())
 				loss, cur_loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
 			agg_loss_dict.append(cur_loss_dict)
 
@@ -195,11 +197,18 @@ class Coach:
 		loss_dict = {}
 		loss = 0.0
 		id_logs = None
+
+		if self.opts.kl_lambda > 0:
+			b, l = latent.size()
+			kl_loss = 0.5 * torch.mean(latents[:, l//2:].exp() - latents[:, l//2:] + latents[:, :l//2].pow(2) - 1, dim=1)
+
+			loss_dict['kl'] = float(kl_loss)
+			loss += kl_loss * self.opts.kl_lambda
 		if self.opts.id_lambda > 0:
 			loss_id, sim_improvement, id_logs = self.id_loss(y_hat, y, x)
 			loss_dict['loss_id'] = float(loss_id)
 			loss_dict['id_improve'] = float(sim_improvement)
-			loss = loss_id * self.opts.id_lambda
+			loss += loss_id * self.opts.id_lambda
 		if self.opts.l2_lambda > 0:
 			loss_l2 = F.mse_loss(y_hat, y)
 			loss_dict['loss_l2'] = float(loss_l2)
