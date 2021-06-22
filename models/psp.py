@@ -70,31 +70,34 @@ class pSp(nn.Module):
 			# 	self.__load_latent_avg(ckpt, repeat=self.opts.n_styles)
 
 	def forward(self, x, resize=True, latent_mask=None, input_code=False, randomize_noise=True,
-	            inject_latent=None, return_latents=False, alpha=None):
-		if input_code:
-			codes = x
-		else:
-			codes = self.encoder(x)
-			b, w, l = codes.size()
-			codes = codes[:,:,:l//2] + Variable(torch.randn(b, w, l//2).to(codes.device)) * (codes[:,:,l//2:] * 0.5).exp()
-			
-			# normalize with respect to the center of an average face
-			if self.opts.start_from_latent_avg:
-				if self.opts.learn_in_w:
-					codes = codes + self.latent_avg.repeat(codes.shape[0], 1)
-				else:
-					codes = codes + self.latent_avg.repeat(codes.shape[0], 1, 1)
+	            inject_latent=None, return_latents=False, alpha=None, skip_encoder=False):
 
-
-		if latent_mask is not None:
-			for i in latent_mask:
-				if inject_latent is not None:
-					if alpha is not None:
-						codes[:, i] = alpha * inject_latent[:, i] + (1 - alpha) * codes[:, i]
+		if skip_encoder == False:
+			print("encoder not skipped")
+			if input_code:
+				codes = x
+			else:
+				codes = self.encoder(x)
+				b, w, l = codes.size()
+				codes = codes[:,:,:l//2] + Variable(torch.randn(b, w, l//2).to(codes.device)) * (codes[:,:,l//2:] * 0.5).exp()
+				
+				# normalize with respect to the center of an average face
+				if self.opts.start_from_latent_avg:
+					if self.opts.learn_in_w:
+						codes = codes + self.latent_avg.repeat(codes.shape[0], 1)
 					else:
-						codes[:, i] = inject_latent[:, i]
-				else:
-					codes[:, i] = 0
+						codes = codes + self.latent_avg.repeat(codes.shape[0], 1, 1)
+
+
+			if latent_mask is not None:
+				for i in latent_mask:
+					if inject_latent is not None:
+						if alpha is not None:
+							codes[:, i] = alpha * inject_latent[:, i] + (1 - alpha) * codes[:, i]
+						else:
+							codes[:, i] = inject_latent[:, i]
+					else:
+						codes[:, i] = 0
 
 		input_is_latent = not input_code
 		images, result_latent = self.decoder([codes],
