@@ -1,7 +1,7 @@
 import os
 import matplotlib
 import matplotlib.pyplot as plt
-
+import sys
 matplotlib.use('Agg')
 
 import torch
@@ -107,6 +107,8 @@ class Coach:
 				print(latent_to_inject.size())
 				fake = self.net(latent_to_inject, skip_encoder=True)
 				print(fake.size())
+				fake_out = self.net(fake.detach(), skip_decoder=True)
+				real_out = self.net(x.detach(), skip_decoder=True)
 				sys.exit(0)
 				# fake,_ = self.net.decoder([code], input_is_latent=False)
 
