@@ -73,12 +73,10 @@ class pSp(nn.Module):
 	            inject_latent=None, return_latents=False, alpha=None, skip_encoder=False, skip_decoder=False):
 
 		if skip_encoder or input_code:
-			print("encoder skipped, skip enc, input_code:", skip_encoder, input_code)
 			codes = x
 		else:
 			codes = self.encoder(x)
 			if skip_decoder:
-				print('dec skipeed')
 				return codes
 
 			b, w, l = codes.size()
