@@ -100,18 +100,29 @@ class Coach:
 
 
 				## ENCODER UPDATE (AS DISCRIMINATOR)
-				codes = torch.randn(latent.size())
-				fake = self.net.decoder(codes).detach()
-				fake_out = self.net.encoder(fake)
+				codes = torch.randn(latent.size()).to(self.device)
+				fake,_ = self.net.decoder([codes])
+				fake_out = self.net.encoder(fake.detach())
 				real_out = self.net.encoder(x.detach())
 				b, w, l = fake_out.size()
-				f_loss = fake_out[:,:,l//2:]
-				r_loss = 0.5 * torch.mean(latent[:, :, l//2:].exp() - latent[:,:,l//2:] + latent[:, :, :l//2].pow(2) - 1)
+				f_loss = fake_out[:,:,l//2:] #+ 0 * (1.0 / (2.0 * fake_out[:,:,l//2:].exp().pow(2.0) + eps)) * (codes - fake_out[:,:,:l//2]).pow(2.0)
+				r_loss = 0.5 * torch.mean(real_out[:, :, l//2:].exp() - real_out[:,:,l//2:] + real_out[:, :, :l//2].pow(2) - 1)
 				dis_loss = torch.mean(f_loss + r_loss)
 				self.enc_optim.zero_grad()
 				dis_loss.backward()
 				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1.)
 				self.enc_optim.step()
+
+				## DECODER UPDATE (AS GENERATOR)
+				codes = torch.randn(latent.size()).to(self.device)
+				fake,_ = self.net.decoder([codes])
+				fake_out = self.net.encoder(fake)
+				adv_loss = 0.5 * torch.mean(fake_out[:, :, l//2:].exp() - fake_out[:,:,l//2:] + fake_out[:, :, :l//2].pow(2) - 1)
+				adv_loss = torch.mean(adv_loss)
+				self.dec_optim.zero_grad()
+				adv_loss.backward()
+				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
+				self.dec_optim.step()
 
 
 				# Logging related
