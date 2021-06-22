@@ -83,13 +83,12 @@ class Coach:
 		while self.global_step < self.opts.max_steps:
 			for batch_idx, batch in enumerate(self.train_dataloader):
 
-				## VAE
+
+
 				x, y = batch
 				x, y = x.to(self.device).float(), y.to(self.device).float()
-				# print(x)
-
-				# print("\n\n\nY")
-				# print(y)
+				
+				## VAE
 				y_hat, latent = self.net.forward(x, return_latents=True)
 				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
 				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
@@ -98,6 +97,22 @@ class Coach:
 				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1.)
 				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
 				self.enc_optim.step(); self.dec_optim.step()
+
+
+				## ENCODER UPDATE (AS DISCRIMINATOR)
+				codes = torch.randn(latent.size())
+				fake = self.net.decoder(codes).detach()
+				fake_out = self.net.encoder(fake)
+				real_out = self.net.encoder(x.detach())
+				b, w, l = fake_out.size()
+				f_loss = fake_out[:,:,l//2:]
+				r_loss = 0.5 * torch.mean(latent[:, :, l//2:].exp() - latent[:,:,l//2:] + latent[:, :, :l//2].pow(2) - 1)
+				dis_loss = torch.mean(f_loss + r_loss)
+				self.enc_optim.zero_grad()
+				dis_loss.backward()
+				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1.)
+				self.enc_optim.step()
+
 
 				# Logging related
 				if self.global_step % self.opts.image_interval == 0 or (
@@ -109,6 +124,7 @@ class Coach:
 				if self.global_step % self.opts.board_interval == 0:
 					self.print_metrics(loss_dict, prefix='train')
 					self.log_metrics(loss_dict, prefix='train')
+					print(f"DIS LOSS: F: {torch.mean(f_loss).item()}, R: {torch.mean(r_loss).item()}")
 
 				# Validation related
 				val_loss_dict = None
