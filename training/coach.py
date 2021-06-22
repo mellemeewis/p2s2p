@@ -103,7 +103,7 @@ class Coach:
 				b, _, l = latent.size()
 				code = torch.randn(b,l).to(self.device)
 				print(code.size())
-				_, latent_to_inject = self.net(cur_vec, input_code=True, return_latents=True)
+				_, latent_to_inject = self.net(code, input_code=True, return_latents=True)
 				print(latent_to_inject.size())
 				fake = self.net(latent_to_inject, skip_encoder=True)
 				print(fake.size())
