@@ -105,7 +105,8 @@ class Coach:
 				print(code.size())
 				_, latent_to_inject = self.net(cur_vec, input_code=True, return_latents=True)
 				print(latent_to_inject.size())
-
+				fake = self.net(x, latent_mask=range(len(latent_to_inject)), inject_latent=latent_to_inject)
+				print(fake.size())
 
 				# fake,_ = self.net.decoder([code], input_is_latent=False)
 
