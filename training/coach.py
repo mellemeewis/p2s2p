@@ -100,10 +100,13 @@ class Coach:
 
 
 				## ENCODER UPDATE (AS DISCRIMINATOR)
-				codes = torch.randn(latent.size()).to(self.device)
-				fake,_ = self.net.decoder([codes])
+				b, _, l = latent.shape()
+				code = torch.randn(b,l).to(self.device)
+				fake,_ = self.net.decoder([code], input_is_latent=False)
+
 				fake_out = self.net.encoder(fake.detach())
 				real_out = self.net.encoder(x.detach())
+				
 				b, w, l = fake_out.size()
 				f_loss = fake_out[:,:,l//2:] #+ 0 * (1.0 / (2.0 * fake_out[:,:,l//2:].exp().pow(2.0) + eps)) * (codes - fake_out[:,:,:l//2]).pow(2.0)
 				r_loss = 0.5 * torch.mean(real_out[:, :, l//2:].exp() - real_out[:,:,l//2:] + real_out[:, :, :l//2].pow(2) - 1)
