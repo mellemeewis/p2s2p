@@ -120,14 +120,15 @@ class Coach:
 				b, w, l = latent.size()
 
 				code = torch.randn(b,l).to(self.device)
-				print(code.size())
+				# print(code.size())
 				_, latent_input = self.net(code, input_code=True, return_latents=True)
-				print(latent_input.size())
+				# print(latent_input.size())
 				sample = self.net(latent_input, skip_encoder=True)
-				print(sample.size())
+				# print(sample.size())
 				sample_out = self.net(sample, skip_decoder=True)
-				print(sample_out.size())
-				adv_loss = 0.5 * torch.mean(real_out[:, :, l//2:].exp() - real_out[:,:,l//2:] + real_out[:, :, :l//2].pow(2) - 1)
+				# print(sample_out.size())
+				b,w,l = sample_out.size()
+				adv_loss = 0.5 * torch.mean(sample_out[:, :, l//2:].exp() - sample_out[:,:,l//2:] + sample_out[:, :, :l//2].pow(2) - 1)
 				adv_loss = torch.mean(adv_loss)
 				self.dec_optim.zero_grad()
 				adv_loss.backward()
@@ -146,6 +147,7 @@ class Coach:
 					self.print_metrics(loss_dict, prefix='train')
 					self.log_metrics(loss_dict, prefix='train')
 					print(f"DIS LOSS: F: {torch.mean(f_loss).item()}, R: {torch.mean(r_loss).item()}")
+					print("ADV LOSS: ", adv_loss.item())
 
 				# Validation related
 				val_loss_dict = None
