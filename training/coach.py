@@ -100,7 +100,7 @@ class Coach:
 
 
 				## ENCODER UPDATE (AS DISCRIMINATOR)
-				b, _, l = latent.shape()
+				b, _, l = latent.size()
 				code = torch.randn(b,l).to(self.device)
 				print(code.size())
 				_, latent_to_inject = self.net(cur_vec, input_code=True, return_latents=True)
