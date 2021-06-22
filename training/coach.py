@@ -100,10 +100,12 @@ class Coach:
 
 
 				## ENCODER UPDATE (AS DISCRIMINATOR)
+				print("ENCODER")
 				b, w, l = latent.size()
-				code = torch.randn(b,l).to(self.device)
-				_, latent_input = self.net(code, input_code=True, return_latents=True)
-				fake = self.net(latent_input, skip_encoder=True)
+				with torch.no_grad():
+					code = torch.randn(b,l).to(self.device)
+					_, latent_input = self.net(code, input_code=True, return_latents=True)
+					fake = self.net(latent_input.detach(), skip_encoder=True)
 				fake_out = self.net(fake.detach(), skip_decoder=True)
 				real_out = self.net(x.detach(), skip_decoder=True)
 
@@ -113,10 +115,13 @@ class Coach:
 				dis_loss = torch.mean(f_loss + r_loss)
 				self.enc_optim.zero_grad()
 				dis_loss.backward()
+				for n, param in self.net.named_parameters():
+					print(n, param.grad != None)
 				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1.)
 				self.enc_optim.step()
 
 				# ## DECODER UPDATE (AS GENERATOR)
+				print("DECODER")
 				b, w, l = latent.size()
 
 				code = torch.randn(b,l).to(self.device)
@@ -132,6 +137,9 @@ class Coach:
 				adv_loss = torch.mean(adv_loss)
 				self.dec_optim.zero_grad()
 				adv_loss.backward()
+				
+				for n, param in self.net.named_parameters():
+					print(n, param.grad != None)
 				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
 				self.dec_optim.step()
 
