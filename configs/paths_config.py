@@ -4,9 +4,10 @@ dataset_paths = {
 	'celeba_test_sketch': '',
 	'celeba_train_segmentation': '',
 	'celeba_test_segmentation': '',
-	'ffhq': '',
+	'ffhq': '/content/drive/MyDrive/datasets/ffhq',
 	'celeba_test': '',
 	'celeba_train': ''
+	'mnist'l '/content/drive/MyDrive/datasets/mnist'
 }
 
 # model_paths = {

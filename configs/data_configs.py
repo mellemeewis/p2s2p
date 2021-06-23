@@ -17,6 +17,13 @@ DATASETS = {
 		'test_source_root': dataset_paths['celeba'],
 		'test_target_root': dataset_paths['celeba'],
 	},
+	'mnist_encode': {
+		'transforms': transforms_config.EncodeTransforms,
+		'train_source_root': dataset_paths['mnist'],
+		'train_target_root': dataset_paths['mnist'],
+		'test_source_root': dataset_paths['mnist'],
+		'test_target_root': dataset_paths['mnist'],
+	},
 	'ffhq_frontalize': {
 		'transforms': transforms_config.FrontalizationTransforms,
 		'train_source_root': dataset_paths['ffhq'],
