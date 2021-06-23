@@ -145,8 +145,8 @@ class Coach:
 						y_sample = self.net.forward(codes, input_code=True)
 					if not vae__:
 						y_hat = y_sample
-        			save_image(torch.cat([x, y, y_hat, y_sample]), f'images/train/faces/{batch_idx}', nrow=4, normalize=True, scale_each=True, pad_value=128, padding=1)
-					self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
+					save_image(torch.cat([x, y, y_hat, y_sample]), f'images/train/faces/{batch_idx}', nrow=4, normalize=True, scale_each=True, pad_value=128, padding=1)
+					# self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
 					if vae__:
 						self.print_metrics(loss_dict, prefix='train')
