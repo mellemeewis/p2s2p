@@ -89,15 +89,20 @@ class Coach:
 				x, y = x.to(self.device).float(), y.to(self.device).float()
 				
 				## VAE
-				y_hat, latent = self.net.forward(x, return_latents=True)
-				loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
-				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
-				loss.backward()
+				vae__=False
+				if vae__:
+					y_hat, latent = self.net.forward(x, return_latents=True)
+					loss, loss_dict, id_logs = self.calc_loss(x, y, y_hat, latent)
+					self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
+					loss.backward()
 
-				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=0.1)
-				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=0.1)
-				self.enc_optim.step(); self.dec_optim.step()
+					nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=0.1)
+					nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=0.1)
+					self.enc_optim.step(); self.dec_optim.step()
 
+				else:
+					id_logs = None
+					latent = torch.randn(4,512)
 
 				## ENCODER UPDATE (AS DISCRIMINATOR)
 				b, w, l = latent.size()
@@ -137,6 +142,8 @@ class Coach:
 					with torch.no_grad():
 						codes = torch.randn(latent.size()).to(self.device)
 						y_sample = self.net.forward(codes, input_code=True)
+					if not vae__:
+						y_hat = y_sample
 					self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
 					self.print_metrics(loss_dict, prefix='train')
