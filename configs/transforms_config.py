@@ -22,7 +22,8 @@ class EncodeTransforms(TransformsConfig):
 		transforms_dict = {
 			'transform_gt_train': transforms.Compose([
 				transforms.ToTensor()]),
-			'transform_source': None,
+			'transform_source': transforms.Compose([
+				transforms.ToTensor()]),
 			'transform_test': transforms.Compose([
 				transforms.ToTensor()]),
 			'transform_inference': transforms.Compose([
