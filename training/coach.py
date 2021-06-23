@@ -18,6 +18,7 @@ from datasets.images_dataset import ImagesDataset
 from criteria.lpips.lpips import LPIPS
 from models.psp import pSp
 from training.ranger import Ranger
+from torchvision.utils import save_image
 
 
 class Coach:
@@ -144,6 +145,7 @@ class Coach:
 						y_sample = self.net.forward(codes, input_code=True)
 					if not vae__:
 						y_hat = y_sample
+        			save_image(torch.cat([x, y, y_hat, y_sample], f'images/train/faces/{batch_idx}', nrow=4, normalize=True, scale_each=True, pad_value=128, padding=1)
 					self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
 					if vae__:
@@ -161,11 +163,11 @@ class Coach:
 							self.best_val_loss = val_loss_dict['loss']
 							self.checkpoint_me(val_loss_dict, is_best=True)
 
-				if self.global_step % self.opts.save_interval == 0 or self.global_step == self.opts.max_steps:
-					if val_loss_dict is not None:
-						self.checkpoint_me(val_loss_dict, is_best=False)
-					else:
-						self.checkpoint_me(loss_dict, is_best=False)
+				# if self.global_step % self.opts.save_interval == 0 or self.global_step == self.opts.max_steps:
+				# 	if val_loss_dict is not None:
+				# 		self.checkpoint_me(val_loss_dict, is_best=False)
+				# 	else:
+				# 		self.checkpoint_me(loss_dict, is_best=False)
 
 				if self.global_step == self.opts.max_steps:
 					print('OMG, finished training!')
