@@ -222,7 +222,7 @@ class Coach:
 		params_dec = list(self.net.decoder.parameters())
 
 		enc_optim = torch.optim.Adam(params_enc, lr=self.opts.learning_rate)
-		dec_optim = torch.optim.Adam(params_dec, lr=0.self.opts.learning_rate)
+		dec_optim = torch.optim.Adam(params_dec, lr=self.opts.learning_rate)
 		return enc_optim, dec_optim
 
 	def configure_datasets(self):
