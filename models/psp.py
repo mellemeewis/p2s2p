@@ -69,7 +69,7 @@ class pSp(nn.Module):
 			# else:
 			# 	self.__load_latent_avg(ckpt, repeat=self.opts.n_styles)
 
-	def forward(self, x, resize=True, latent_mask=None, input_code=False, randomize_noise=True,
+	def forward(self, x, resize=False, latent_mask=None, input_code=False, randomize_noise=True,
 	            inject_latent=None, return_latents=False, alpha=None, skip_encoder=False, skip_decoder=False):
 
 		if skip_encoder or input_code:
