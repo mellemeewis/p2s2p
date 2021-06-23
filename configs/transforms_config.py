@@ -19,36 +19,41 @@ class EncodeTransforms(TransformsConfig):
 		super(EncodeTransforms, self).__init__(opts)
 
 	def get_transforms(self):
-		transforms_dict = {
-			'transform_gt_train': transforms.Compose([
-				transforms.ToTensor()]),
-			'transform_source': transforms.Compose([
-				transforms.ToTensor()]),
-			'transform_test': transforms.Compose([
-				transforms.ToTensor()]),
-			'transform_inference': transforms.Compose([
-				transforms.ToTensor()]),
-		}
+		if  'mnist' in opts.dataset_type:
+			transforms_dict = {
+				'transform_gt_train': transforms.Compose([
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+				'transform_source': transforms.Compose([
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+				'transform_test': transforms.Compose([
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+				'transform_inference': transforms.Compose([
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+			}
+		else:
+			transforms_dict = {
+				'transform_gt_train': transforms.Compose([
+					transforms.RandomHorizontalFlip(0.5),
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+				'transform_source': transforms.Compose([
+					transforms.RandomHorizontalFlip(0.5),
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+				'transform_test': transforms.Compose([
+					transforms.RandomHorizontalFlip(0.5),
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+				'transform_inference': transforms.Compose([
+					transforms.RandomHorizontalFlip(0.5),
+					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.ToTensor()]),
+			}
 		return transforms_dict
-
-	# def get_transforms(self):
-	# 	transforms_dict = {
-	# 		'transform_gt_train': transforms.Compose([
-	# 			transforms.Resize((256, 256)),
-	# 			transforms.RandomHorizontalFlip(0.5),
-	# 			transforms.ToTensor(),
-	# 			transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])]),
-	# 		'transform_source': None,
-	# 		'transform_test': transforms.Compose([
-	# 			transforms.Resize((256, 256)),
-	# 			transforms.ToTensor(),
-	# 			transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])]),
-	# 		'transform_inference': transforms.Compose([
-	# 			transforms.Resize((256, 256)),
-	# 			transforms.ToTensor(),
-	# 			transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])])
-	# 	}
-	# 	return transforms_dict
 
 
 class FrontalizationTransforms(TransformsConfig):
