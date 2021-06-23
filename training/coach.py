@@ -126,8 +126,7 @@ class Coach:
 				# ## DECODER UPDATE (AS GENERATOR)
 				b, w, l = latent.size()
 				code = torch.randn(b,l).to(self.device)
-				_, latent_input = self.net(code, input_code=True, return_latents=True)
-				sample = self.net(latent_input, skip_encoder=True)
+				sample, latent_input = self.net(code, input_code=True, return_latents=True)
 				sample_out = self.net(sample, skip_decoder=True)
 				b,w,l = sample_out.size()
 				adv_loss = 0.5 * torch.mean(sample_out[:, :, l//2:].exp() - sample_out[:,:,l//2:] + sample_out[:, :, :l//2].pow(2) - 1)
@@ -145,7 +144,7 @@ class Coach:
 						y_sample = self.net.forward(codes, input_code=True)
 					if not vae__:
 						y_hat = y_sample
-					save_image(torch.cat([x, y, y_hat, y_sample]), f'/{self.opts.exp_dir}/{batch_idx}.png', nrow=4, normalize=True, scale_each=True, pad_value=128, padding=1)
+					save_image(torch.cat([x, y, y_hat, y_sample]), f'/{self.opts.exp_dir}/{self.global_step}.png', nrow=4, normalize=True, scale_each=True, pad_value=128, padding=1)
 					# self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
 					if vae__:
