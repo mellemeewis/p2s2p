@@ -21,8 +21,8 @@ class TrainOptions:
 		self.parser.add_argument('--workers', default=4, type=int, help='Number of train dataloader workers')
 		self.parser.add_argument('--test_workers', default=2, type=int, help='Number of test/inference dataloader workers')
 
-		self.parser.add_argument('--lr_encoder', default=0.00001, type=float, help='Optimizer learning rate encoder')
-		self.parser.add_argument('--lr_decoder', default=0.000001, type=float, help='Optimizer learning rate decoder')
+		self.parser.add_argument('--lr_encoder', default=0.000001, type=float, help='Optimizer learning rate encoder')
+		self.parser.add_argument('--lr_decoder', default=0.00001, type=float, help='Optimizer learning rate decoder')
 		# self.parser.add_argument('--optim_name', default='ranger', type=str, help='Which optimizer to use')
 		self.parser.add_argument('--train_decoder', default=True, type=bool, help='Whether to train the decoder model')
 		self.parser.add_argument('--start_from_latent_avg', action='store_true', help='Whether to add average latent vector to generate codes from encoder.')

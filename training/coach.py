@@ -97,8 +97,8 @@ class Coach:
 					self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
 					loss.backward()
 
-					nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1)
-					nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1)
+					nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1.)
+					nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
 					self.enc_optim.step(); self.dec_optim.step()
 
 				else:
@@ -120,7 +120,7 @@ class Coach:
 				dis_loss = torch.mean(f_loss + r_loss)
 				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
 				dis_loss.backward()
-				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=1)
+				nn.utils.clip_grad_norm_(self.net.encoder.parameters(), max_norm=.1)
 				self.enc_optim.step()
 
 				# ## DECODER UPDATE (AS GENERATOR)
@@ -134,7 +134,7 @@ class Coach:
 				adv_loss = torch.mean(adv_loss)
 				self.enc_optim.zero_grad(); self.dec_optim.zero_grad()
 				adv_loss.backward()
-				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1)
+				nn.utils.clip_grad_norm_(self.net.decoder.parameters(), max_norm=1.)
 				self.dec_optim.step()
 
 				# Logging related
@@ -221,8 +221,8 @@ class Coach:
 		params_enc = list(self.net.encoder.parameters())
 		params_dec = list(self.net.decoder.parameters())
 
-		enc_optim = torch.optim.Adam(params_enc, lr=self.opts.learning_rate)
-		dec_optim = torch.optim.Adam(params_dec, lr=self.opts.learning_rate)
+		enc_optim = torch.optim.Adam(params_enc, lr=self.opts.lr_encoder)
+		dec_optim = torch.optim.Adam(params_dec, lr=self.opts.lr_decoder)
 		return enc_optim, dec_optim
 
 	def configure_datasets(self):
