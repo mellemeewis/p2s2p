@@ -7,7 +7,7 @@ dataset_paths = {
 	'ffhq': '/content/drive/MyDrive/datasets/ffhq',
 	'celeba_test': '',
 	'celeba_train': ''
-	'mnist'l '/content/drive/MyDrive/datasets/mnist'
+	'mnist': '/content/drive/MyDrive/datasets/mnist'
 }
 
 # model_paths = {
