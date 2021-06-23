@@ -102,7 +102,7 @@ class Coach:
 
 				else:
 					id_logs = None
-					latent = torch.randn(4,512)
+					latent = torch.randn(4,10,512)
 
 				## ENCODER UPDATE (AS DISCRIMINATOR)
 				b, w, l = latent.size()
@@ -146,8 +146,9 @@ class Coach:
 						y_hat = y_sample
 					self.parse_and_log_images(id_logs, x, y, y_hat, y_sample, title='images/train/faces')
 				if self.global_step % self.opts.board_interval == 0:
-					self.print_metrics(loss_dict, prefix='train')
-					self.log_metrics(loss_dict, prefix='train')
+					if vae__:
+						self.print_metrics(loss_dict, prefix='train')
+						self.log_metrics(loss_dict, prefix='train')
 					print(f"DIS LOSS: F: {torch.mean(f_loss).item()}, R: {torch.mean(r_loss).item()}")
 					print("ADV LOSS: ", adv_loss.item())
 
