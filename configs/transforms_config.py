@@ -19,38 +19,38 @@ class EncodeTransforms(TransformsConfig):
 		super(EncodeTransforms, self).__init__(opts)
 
 	def get_transforms(self):
-		if  'mnist' in opts.dataset_type:
+		if  'mnist' in self.opts.dataset_type:
 			transforms_dict = {
 				'transform_gt_train': transforms.Compose([
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 				'transform_source': transforms.Compose([
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 				'transform_test': transforms.Compose([
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 				'transform_inference': transforms.Compose([
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 			}
 		else:
 			transforms_dict = {
 				'transform_gt_train': transforms.Compose([
 					transforms.RandomHorizontalFlip(0.5),
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 				'transform_source': transforms.Compose([
 					transforms.RandomHorizontalFlip(0.5),
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 				'transform_test': transforms.Compose([
 					transforms.RandomHorizontalFlip(0.5),
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 				'transform_inference': transforms.Compose([
 					transforms.RandomHorizontalFlip(0.5),
-					transforms.Resize((opts.output_size, opts.output_size)),
+					transforms.Resize((self.opts.output_size, self.opts.output_size)),
 					transforms.ToTensor()]),
 			}
 		return transforms_dict
