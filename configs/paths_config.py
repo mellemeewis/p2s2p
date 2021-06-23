@@ -6,7 +6,7 @@ dataset_paths = {
 	'celeba_test_segmentation': '',
 	'ffhq': '/content/drive/MyDrive/datasets/ffhq',
 	'celeba_test': '',
-	'celeba_train': ''
+	'celeba_train': '',
 	'mnist': '/content/drive/MyDrive/datasets/mnist'
 }
 
